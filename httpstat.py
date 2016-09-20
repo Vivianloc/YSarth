@@ -39,24 +39,29 @@ curl_format = """{
 }"""
 
 https_template = """
-  DNS Lookup   TCP Connection   SSL Handshake   Server Processing   Content Transfer
-[   {a0000}  |     {a0001}    |    {a0002}    |      {a0003}      |      {a0004}     ]
-             |                |               |                   |                  |
-    namelookup:{b0000}        |               |                   |                  |
-                        connect:{b0001}       |                   |                  |
-                                    pretransfer:{b0002}           |                  |
-                                                      starttransfer:{b0003}          |
-                                                                                 total:{b0004}
+  DNS Lookup            {a0000} 
+  TCP Connection        {a0001} 
+  SSL Handshake         {a0002}
+  Server Processing     {a0003}
+  Content Transfer      {a0004}
+
+    namelookup:{b0000}  
+       connect:{b0001}
+          pretransfer:{b0002}
+             starttransfer:{b0003}
+
 """[1:]
 
 http_template = """
-  DNS Lookup   TCP Connection   Server Processing   Content Transfer
-[   {a0000}  |     {a0001}    |      {a0003}      |      {a0004}     ]
-             |                |                   |                  |
-    namelookup:{b0000}        |                   |                  |
-                        connect:{b0001}           |                  |
-                                      starttransfer:{b0003}          |
-                                                                 total:{b0004}
+  DNS Lookup            {a0000} 
+  TCP Connection        {a0001} 
+  Server processing     {a0003}
+  Content Transfer      {a0004}
+
+    namelookup:{b0000}  
+       connect:{b0001}
+          starttransfer:{b0003}
+               total:{b0004}                                                                       
 """[1:]
 
 
@@ -77,10 +82,10 @@ green = make_color(32)
 yellow = make_color(33)
 blue = make_color(34)
 magenta = make_color(35)
-#cyan = make_color(36)
+cyan = make_color(35)
 
 bold = make_color(1)
-#underline = make_color(4)
+underline = make_color(4)
 
 grayscale = {(i - 232): make_color('38;5;' + str(i)) for i in xrange(232, 256)}
 
