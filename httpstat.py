@@ -47,7 +47,7 @@ https_template = """
              |                |     pretransfer:{b0002}           |                  |
              |                |               |       starttransfer:{b0003}          |
              |                |               |                   |              total:{b0004}
-[---{c0000}--|     {c0001}    |    {c0002}    |      {c0003}      |      {c0004}     ]
+[   {c0000}  |     {c0001}    |    {c0002}    |      {c0003}      |      {c0004}     ]
 """[1:]
 
 http_template = """
