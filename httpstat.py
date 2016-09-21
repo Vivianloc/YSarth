@@ -39,30 +39,28 @@ curl_format = """{
 }"""
 
 https_template = """
-  DNS Lookup            {a0000} 
-  TCP Connection        {a0001} 
-  SSL Handshake         {a0002}
-  Server Processing     {a0003}
-  Content Transfer      {a0004}
-
-    namelookup:{b0000}  
-       connect:{b0001}
-          pretransfer:{b0002}
-             starttransfer:{b0003}
-
+  DNS Lookup   TCP Connection   SSL Handshake   Server Processing   Content Transfer
+[   {a0000}  |     {a0001}    |    {a0002}    |      {a0003}      |      {a0004}     ]
+             |                |               |                   |                  |
+    namelookup:{b0000}        |               |                   |                  |
+             |          connect:{b0001}       |                   |                  |
+             |                |     pretransfer:{b0002}           |                  |
+             |                |               |       starttransfer:{b0003}          |
+             |                |               |                   |              total:{b0004}
+[---{c0000}--|     {c0001}    |    {c0002}    |      {c0003}      |      {c0004}     ]
 """[1:]
 
 http_template = """
-  DNS Lookup            {a0000} 
-  TCP Connection        {a0001} 
-  Server processing     {a0003}
-  Content Transfer      {a0004}
-
-    namelookup:{b0000}  
-       connect:{b0001}
-          starttransfer:{b0003}
-               total:{b0004}
+  DNS Lookup   TCP Connection   Server Processing   Content Transfer
+[   {a0000}  |     {a0001}    |      {a0003}      |      {a0004}     ]
+             |                |                   |                  |
+    namelookup:{b0000}        |                   |                  |
+             |           connect:{b0001}          |                  |
+             |                |       starttransfer:{b0003}          |
+             |                |                   |              total:{b0004}
+[   {c0000}  |     {c0001}    |      {c0003}      |      {c0004}     ]
 """[1:]
+
 
 ISATTY = sys.stdout.isatty()
 
@@ -76,15 +74,15 @@ def make_color(code):
     return color_func
 
 
-red = make_color(33)
+red = make_color(31)
 green = make_color(32)
-yellow = make_color(31)
+yellow = make_color(33)
 blue = make_color(34)
 magenta = make_color(35)
 cyan = make_color(36)
 
 bold = make_color(1)
-underline = make_color(6)
+underline = make_color(4)
 
 grayscale = {(i - 232): make_color('38;5;' + str(i)) for i in xrange(232, 256)}
 
@@ -192,6 +190,15 @@ def main():
         range_transfer=d['time_total'] - d['time_starttransfer'],
     )
 
+    # calculat persentage
+    d.update(
+         per_dns=d['range_dns']/d['time_total']*100,
+         per_connection=d['range_connection']/d['time_total']*100,
+         per_ssl=d['range_ssl']/d['time_total']*100,
+         per_server=d['range_server']/d['time_total']*100,
+         per_transfer=d['range_transfer']/d['time_total']*100,
+    )
+
     # print header & body summary
     with open(headerf.name, 'r') as f:
         headers = f.read().strip()
@@ -239,6 +246,9 @@ def main():
     def fmtb(s):
         return cyan('{:<7}'.format(str(s) + 'ms'))
 
+    def fmtc(s):
+        return cyan('{:<7}'.format(str(s) + '%'))
+
     stat = template.format(
         # a
         a0000=fmta(d['range_dns']),
@@ -252,6 +262,12 @@ def main():
         b0002=fmtb(d['time_pretransfer']),
         b0003=fmtb(d['time_starttransfer']),
         b0004=fmtb(d['time_total']),
+        # c
+        c0000=fmtc('%.2f' %d['per_dns']),
+        c0001=fmtc('%.2f' %d['per_connection']),
+        c0002=fmtc('%.2f' %d['per_ssl']),
+        c0003=fmtc('%.2f' %d['per_server']),
+        c0004=fmtc('%.2f' %d['per_transfer']),
     )
     print()
     print(stat)
