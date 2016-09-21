@@ -47,19 +47,19 @@ https_template = """
                                     pretransfer:{b0002}           |                  |
                                                       starttransfer:{b0003}          |
                                                                                  total:{b0004}
+[   {c0000}        {c0001}         {c0002}           {c0003}             {c0004}     ]
 """[1:]
 
 
 http_template = """
-  DNS Lookup            {a0000} 
-  TCP Connection        {a0001} 
-  Server processing     {a0003}
-  Content Transfer      {a0004}
-
-    namelookup:{b0000}  
-       connect:{b0001}
-          starttransfer:{b0003}
-               total:{b0004}                                                                       
+  DNS Lookup   TCP Connection   Server Processing   Content Transfer
+[   {a0000}  |     {a0001}    |      {a0003}      |      {a0004}     ]
+             |                |                   |                  |
+    namelookup:{b0000}        |                   |                  |
+                        connect:{b0001}           |                  |
+                                      starttransfer:{b0003}          |
+                                                                 total:{b0004}
+[   {c0000}        {c0001}           {c0003}             {c0004}     ]
 """[1:]
 
 
@@ -190,6 +190,14 @@ def main():
         range_server=d['time_starttransfer'] - d['time_pretransfer'],
         range_transfer=d['time_total'] - d['time_starttransfer'],
     )
+    # calculate time percentage
+    d.update(
+        per_dns=d['range_dns'] / d['time_total'] * 100,
+        per_connection=d['range_connection'] / d['time_total'] * 100,
+        per_ssl=d['range_ssl'] / d['time_total'] * 100,
+        per_server=d['range_server'] / d['time_total'] * 100,
+        per_transfer=d['range_transfer'] / d['time_total'] * 100,
+    )
 
     # print header & body summary
     with open(headerf.name, 'r') as f:
@@ -237,6 +245,10 @@ def main():
 
     def fmtb(s):
         return cyan('{:<7}'.format(str(s) + 'ms'))
+        
+    def fmtc(s):
+        return cyan('{:<7}'.format(str(s) + '%'))
+
 
     stat = template.format(
         # a
@@ -251,6 +263,12 @@ def main():
         b0002=fmtb(d['time_pretransfer']),
         b0003=fmtb(d['time_starttransfer']),
         b0004=fmtb(d['time_total']),
+        # c
+        c0000=fmtc('%.2f' %d['per_dns']),
+        c0001=fmtc('%.2f' %d['per_connection']),
+        c0002=fmtc('%.2f' %d['per_ssl']),
+        c0003=fmtc('%.2f' %d['per_server'],
+        c0004=fmtc('%.2f' %d['per_transfer'],
     )
     print()
     print(stat)
