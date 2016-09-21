@@ -73,15 +73,15 @@ def make_color(code):
     return color_func
 
 
-red = make_color(31)
+red = make_color(33)
 green = make_color(32)
-yellow = make_color(33)
+yellow = make_color(31)
 blue = make_color(34)
 magenta = make_color(35)
-cyan = make_color(35)
+cyan = make_color(36)
 
 bold = make_color(1)
-underline = make_color(4)
+underline = make_color(6)
 
 grayscale = {(i - 232): make_color('38;5;' + str(i)) for i in xrange(232, 256)}
 
