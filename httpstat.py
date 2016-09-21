@@ -43,23 +43,22 @@ https_template = """
 [   {a0000}  |     {a0001}    |    {a0002}    |      {a0003}      |      {a0004}     ]
              |                |               |                   |                  |
     namelookup:{b0000}        |               |                   |                  |
-                        connect:{b0001}       |                   |                  |
-                                    pretransfer:{b0002}           |                  |
-                                                      starttransfer:{b0003}          |
-                                                                                 total:{b0004}
-[   {c0000}        {c0001}         {c0002}           {c0003}             {c0004}     ]
+             |          connect:{b0001}       |                   |                  |
+             |                |     pretransfer:{b0002}           |                  |
+             |                |               |       starttransfer:{b0003}          |
+             |                |               |                   |              total:{b0004}
+[---{c0000}--|     {c0001}    |    {c0002}    |      {c0003}      |      {c0004}     ]
 """[1:]
-
 
 http_template = """
   DNS Lookup   TCP Connection   Server Processing   Content Transfer
 [   {a0000}  |     {a0001}    |      {a0003}      |      {a0004}     ]
              |                |                   |                  |
     namelookup:{b0000}        |                   |                  |
-                        connect:{b0001}           |                  |
-                                      starttransfer:{b0003}          |
-                                                                 total:{b0004}
-[   {c0000}        {c0001}           {c0003}             {c0004}     ]
+             |           connect:{b0001}          |                  |
+             |                |       starttransfer:{b0003}          |
+             |                |                   |              total:{b0004}
+[   {c0000}  |     {c0001}    |      {c0003}      |      {c0004}     ]
 """[1:]
 
 
@@ -80,7 +79,7 @@ green = make_color(32)
 yellow = make_color(33)
 blue = make_color(34)
 magenta = make_color(35)
-cyan = make_color(35)
+cyan = make_color(36)
 
 bold = make_color(1)
 underline = make_color(4)
@@ -190,13 +189,14 @@ def main():
         range_server=d['time_starttransfer'] - d['time_pretransfer'],
         range_transfer=d['time_total'] - d['time_starttransfer'],
     )
-    # calculate time percentage
+
+    # calculat persentage
     d.update(
-        per_dns=d['range_dns'] / d['time_total'] * 100,
-        per_connection=d['range_connection'] / d['time_total'] * 100,
-        per_ssl=d['range_ssl'] / d['time_total'] * 100,
-        per_server=d['range_server'] / d['time_total'] * 100,
-        per_transfer=d['range_transfer'] / d['time_total'] * 100,
+         per_dns=d['range_dns']/d['time_total']*100,
+         per_connection=d['range_connection']/d['time_total']*100,
+         per_ssl=d['range_ssl']/d['time_total']*100,
+         per_server=d['range_server']/d['time_total']*100,
+         per_transfer=d['range_transfer']/d['time_total']*100,
     )
 
     # print header & body summary
@@ -245,10 +245,9 @@ def main():
 
     def fmtb(s):
         return cyan('{:<7}'.format(str(s) + 'ms'))
-        
+
     def fmtc(s):
         return cyan('{:<7}'.format(str(s) + '%'))
-
 
     stat = template.format(
         # a
@@ -267,8 +266,8 @@ def main():
         c0000=fmtc('%.2f' %d['per_dns']),
         c0001=fmtc('%.2f' %d['per_connection']),
         c0002=fmtc('%.2f' %d['per_ssl']),
-        c0003=fmtc('%.2f' %d['per_server'],
-        c0004=fmtc('%.2f' %d['per_transfer'],
+        c0003=fmtc('%.2f' %d['per_server']),
+        c0004=fmtc('%.2f' %d['per_transfer']),
     )
     print()
     print(stat)
