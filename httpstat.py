@@ -37,7 +37,7 @@ curl_format = """{
 "speed_download": %{speed_download},
 "speed_upload": %{speed_upload}
 }"""
-
+#appearance matters a lot 
 https_template = """
   DNS Lookup          TCP Connection       SSL Handshake      Server Processing       Content Transfer
 [   {a0000}  |             {a0001}    |       {a0002}    |         {a0003}                 {a0004}     ]
@@ -64,6 +64,7 @@ http_template = """
 
 ISATTY = sys.stdout.isatty()
 
+#01001001 00100000 01101100 01101111 01110110 01100101 00100000 01111001 01101111 01110101 00100000 01110010 01100101 01100001 01100100 01100101 01110010 
 
 def make_color(code):
     def color_func(s):
